@@ -1,46 +1,42 @@
-library('FactoMineR')
 #Lectura de datos.
-df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/good_luck.csv")
+df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/guess.csv")
 #Modificamos el nombre de las columnas por comodidad.
-colnames(df)[11] <- "class"
+colnames(df) <- c("x","y")
 
 #****************************************************************************************
 #Analisis exploratorio del dataset
 #****************************************************************************************
-#Podemos observar que hay 11 columnas.
+#Podemos observar que hay 2 columnas.
 head(df)
 
-#Observamos cuantos elementos hay de cada clase.
-table(df$class)
-#0   1 
-#513 486 
-
-
 #Grafico 
-plot(df)
-PCA <- PCA(df)
+plot(df$x, df$y)
+#Podemos observar 2 conglomerados
 
-plot(PCA)
-
-length(unique(df$class))
-#Existen 2 clases.
+#Aplicamos codo de Jambu como ayuda para seleccionar el K
+plot(df, pch = 19)
+InerciaIC = rep(0, 30)
+for (k in 1:30) {
+  grupos = kmeans(df, k)
+  InerciaIC[k] = grupos$tot.withinss
+}
+plot(InerciaIC, col = "blue", type = "b")
+#Segun mi analisis el k adecuado es 2
 #****************************************************************************************
-                                    #K-MEDIAS
+#K-MEDIAS
 #****************************************************************************************
-#Aplicamos k=2 ya que  existen 2 clases.
-modelo.kmedias = kmeans(x = df[1:10], centers = 2)
+#Aplicamos k=2 ya que identificamos 2 conglomerados.
+modelo.kmedias = kmeans(x = df[, c("x", "y")], centers = 2)
 
 #GRAFICAMOS LOS CLUSTERS
-plot(df, col = modelo.kmedias$cluster)
+plot(x = df$x, y = df$y, col = modelo.kmedias$cluster)
 
 # Ahora graficamos los centroides 
-points(x = modelo.kmedias$centers, col = 1:4, pch = 19, cex = 3)
+points(x = modelo.kmedias$centers[, c("x", "y")], col = 1:4, pch = 19, cex = 3)
 
-#Generamos la matriz de confusion
-matrizconfusion <- table(df$class,modelo.kmedias$cluster,dnn=c("Clase", "Cluster"))
 
 #****************************************************************************************
-                                  #Cluster Jerárquicos
+#Cluster Jerárquicos
 #****************************************************************************************
 #Copy del dataset
 datos = df
@@ -65,7 +61,7 @@ clusterJ <- function(method, k, h){
   #Observamos la cantidad de clusters
   unique(corte)
   #Graficamos los clusters
-  plot(df, col = corte)
+  plot(x = df$x, y = df$y, col = corte)
   
   ############################################################
   #Dada una altura h (una medida de disimilaridad) determinar 
@@ -76,21 +72,21 @@ clusterJ <- function(method, k, h){
   #Observamos la cantidad de clusters
   unique(corte)
   #Graficamos los clusters
-  plot(df, col = corte)
+  plot(x = df$x, y = df$y, col = corte)
 }
 #--------------------------------------------------------------------------------------
 #METHOD COMPLETE
 #--------------------------------------------------------------------------------------
-clusterJ("complete",2,9.3)
+clusterJ("complete",2,100)
 #--------------------------------------------------------------------------------------
 #METHOD SINGLE
 #--------------------------------------------------------------------------------------
-clusterJ("single",2,3.75)
+clusterJ("single",2,10)
 #--------------------------------------------------------------------------------------
 #METHOD AVERAGE
 #--------------------------------------------------------------------------------------
-clusterJ("average",2,6.2)
+clusterJ("average",2,50)
 #--------------------------------------------------------------------------------------
 #METHOD ward.D
 #--------------------------------------------------------------------------------------
-clusterJ("ward.D",2,80)
+clusterJ("ward.D",2,30000)

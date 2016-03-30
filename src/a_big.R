@@ -1,5 +1,8 @@
+
+setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
+source("src/funciones.R")
 #Lectura de datos.
-df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/a_big.csv")
+df = read.csv(file = "data/a_big.csv")
 #Modificamos el nombre de las columnas por comodidad.
 colnames(df) <- c("x","y","class")
 
@@ -24,13 +27,9 @@ length(unique(df$class))
                                           #K-MEDIAS
 #****************************************************************************************
 #Aplicamos k=3 ya que identificamos 3 conglomerados y existen 3 clases.
-modelo.kmedias = kmeans(x = df[, c("x", "y")], centers = 3)
+x<-kmedias(df,1:2,3)
 
-#GRAFICAMOS LOS CLUSTERS
-plot(x = df$x, y = df$y, col = modelo.kmedias$cluster)
 
-# Ahora graficamos los centroides 
-points(x = modelo.kmedias$centers[, c("x", "y")], col = 1:4, pch = 19, cex = 3)
 
 #Generamos la matriz de confusion
 matrizconfusion <- table(df$class,modelo.kmedias$cluster,dnn=c("Clase", "Cluster"))
