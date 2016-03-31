@@ -1,3 +1,5 @@
+setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
+source("src/funciones.R")
 #Lectura de datos.
 df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/guess.csv")
 #Modificamos el nombre de las columnas por comodidad.
@@ -14,7 +16,6 @@ plot(df$x, df$y)
 #Podemos observar 2 conglomerados
 
 #Aplicamos codo de Jambu como ayuda para seleccionar el K
-plot(df, pch = 19)
 InerciaIC = rep(0, 30)
 for (k in 1:30) {
   grupos = kmeans(df, k)
@@ -23,20 +24,14 @@ for (k in 1:30) {
 plot(InerciaIC, col = "blue", type = "b")
 #Segun mi analisis el k adecuado es 2
 #****************************************************************************************
-#K-MEDIAS
+                                          #K-MEDIAS
 #****************************************************************************************
 #Aplicamos k=2 ya que identificamos 2 conglomerados.
-modelo.kmedias = kmeans(x = df[, c("x", "y")], centers = 2)
-
-#GRAFICAMOS LOS CLUSTERS
-plot(x = df$x, y = df$y, col = modelo.kmedias$cluster)
-
-# Ahora graficamos los centroides 
-points(x = modelo.kmedias$centers[, c("x", "y")], col = 1:4, pch = 19, cex = 3)
-
+#kmedias(Dataframe, Columnas,K)
+clusters <- kmedias(df, 1:2, 2)
 
 #****************************************************************************************
-#Cluster JerÃ¡rquicos
+                                    #CLUSTER JERARQUICO
 #****************************************************************************************
 #Copy del dataset
 datos = df
@@ -47,46 +42,52 @@ datos= as.matrix(datos)
 #Calculamos la matriz de distancia
 distancia = dist(datos)
 
-clusterJ <- function(method, k, h){
-  #Aplicamos cluster jerarquico utilizando el metodo complete
-  cluster = hclust(distancia, method = method)
-  #Graficamos el dendogram
-  plot(cluster)
-  
-  ############################################################
-  #Determinar la altura requerida dado un numero de clusters k
-  ############################################################
-  #Cortamos el dendograma con 2 clases
-  corte = cutree(cluster, k = k)
-  #Observamos la cantidad de clusters
-  unique(corte)
-  #Graficamos los clusters
-  plot(x = df$x, y = df$y, col = corte)
-  
-  ############################################################
-  #Dada una altura h (una medida de disimilaridad) determinar 
-  #el nÃºmero de clÃºsters que se obtienen
-  ############################################################
-  # Cortamos por altura
-  corte = cutree(cluster, h = h)
-  #Observamos la cantidad de clusters
-  unique(corte)
-  #Graficamos los clusters
-  plot(x = df$x, y = df$y, col = corte)
-}
 #--------------------------------------------------------------------------------------
-#METHOD COMPLETE
+                                    #METHOD COMPLETE
 #--------------------------------------------------------------------------------------
-clusterJ("complete",2,100)
+#Dado un número de clústers k determinar la altura requerida 
+#para que tengamos el número de clúster k.
+clustersD <- clusterJD(df, distancia, 1:2, "complete", 2)
+
+#**********************************************************
+#Dada una altura h (una medida de disimilaridad) determinar 
+#el número de clústers que se obtienen.
+clustersH <- clusterJH(df, distancia, 1:2, "complete", 100)
+
 #--------------------------------------------------------------------------------------
-#METHOD SINGLE
+                                  #METHOD SINGLE
 #--------------------------------------------------------------------------------------
-clusterJ("single",2,10)
+#Dado un número de clústers k determinar la altura requerida 
+#para que tengamos el número de clúster k.
+clustersD <- clusterJD(df, distancia, 1:2, "single", 2)
+
+#**********************************************************
+#Dada una altura h (una medida de disimilaridad) determinar 
+#el número de clústers que se obtienen.
+clustersH <- clusterJH(df, distancia, 1:2, "single", 10)
+
 #--------------------------------------------------------------------------------------
-#METHOD AVERAGE
+                                  #METHOD AVERAGE
 #--------------------------------------------------------------------------------------
-clusterJ("average",2,50)
+#Dado un número de clústers k determinar la altura requerida 
+#para que tengamos el número de clúster k.
+clustersD <- clusterJD(df, distancia, 1:2, "average", 2)
+
+#**********************************************************
+#Dada una altura h (una medida de disimilaridad) determinar 
+#el número de clústers que se obtienen.
+clustersH <- clusterJH(df, distancia, 1:2, "average", 50)
+
 #--------------------------------------------------------------------------------------
 #METHOD ward.D
 #--------------------------------------------------------------------------------------
-clusterJ("ward.D",2,30000)
+#Dado un número de clústers k determinar la altura requerida 
+#para que tengamos el número de clúster k.
+clustersD <- clusterJD(df, distancia, 1:2, "ward.D", 2)
+
+#**********************************************************
+#Dada una altura h (una medida de disimilaridad) determinar 
+#el número de clústers que se obtienen.
+clustersH <- clusterJH(df, distancia, 1:2, "ward.D", 30000)
+
+

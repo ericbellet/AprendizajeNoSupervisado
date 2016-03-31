@@ -27,13 +27,12 @@ length(unique(df$class))
                                           #K-MEDIAS
 #****************************************************************************************
 #Aplicamos k=3 ya que identificamos 3 conglomerados y existen 3 clases.
-x<-kmedias(df,1:2,3)
-
-
+#kmedias(Dataframe, Columnas,K)
+clusters <- kmedias(df,1:2,3)
 
 #Generamos la matriz de confusion
-matrizconfusion <- table(df$class,modelo.kmedias$cluster,dnn=c("Clase", "Cluster"))
-matrizconfusion
+MatrixConfusion <- matrizconfusion(df$class,clusters)
+
 #****************************************************************************************
                                 #Implementacion k-medias
 #****************************************************************************************

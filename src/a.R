@@ -1,3 +1,6 @@
+setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
+source("src/funciones.R")
+
 #Lectura de datos.
 df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/a.csv")
 #Modificamos el nombre de las columnas por comodidad.
@@ -24,16 +27,11 @@ length(unique(df$class))
                                        #K-MEDIAS
 #****************************************************************************************
 #Aplicamos k=3 ya que identificamos 3 conglomerados y existen 3 clases.
-modelo.kmedias = kmeans(x = df[, c("x", "y")], centers = 3)
-
-#GRAFICAMOS LOS CLUSTERS
-plot(x = df$x, y = df$y, col = modelo.kmedias$cluster)
-
-# Ahora graficamos los centroides 
-points(x = modelo.kmedias$centers[, c("x", "y")], col = 1:4, pch = 19, cex = 3)
+#kmedias(Dataframe, Columnas,K)
+clusters <- kmedias(df, 1:2, 3)
 
 #Generamos la matriz de confusion
-matrizconfusion <- table(df$class,modelo.kmedias$cluster,dnn=c("Clase", "Cluster"))
+MatrixConfusionK <- matrizconfusion(df$class,clusters)
 
 #****************************************************************************************
                                     #Cluster Jerárquicos
@@ -47,46 +45,65 @@ datos= as.matrix(datos)
 #Calculamos la matriz de distancia
 distancia = dist(datos)
 
-clusterJ <- function(method, k, h){
-  #Aplicamos cluster jerarquico utilizando el metodo complete
-  cluster = hclust(distancia, method = method)
-  #Graficamos el dendogram
-  plot(cluster)
-  
-  ############################################################
-  #Determinar la altura requerida dado un numero de clusters k
-  ############################################################
-  #Cortamos el dendograma con 3 clases
-  corte = cutree(cluster, k = k)
-  #Observamos la cantidad de clusters
-  unique(corte)
-  #Graficamos los clusters
-  plot(x = df$x, y = df$y, col = corte)
-  
-  ############################################################
-  #Dada una altura h (una medida de disimilaridad) determinar 
-  #el número de clústers que se obtienen
-  ############################################################
-  # Cortamos por altura
-  corte = cutree(cluster, h = h)
-  #Observamos la cantidad de clusters
-  unique(corte)
-  #Graficamos los clusters
-  plot(x = df$x, y = df$y, col = corte)
-}
 #--------------------------------------------------------------------------------------
                                     #METHOD COMPLETE
 #--------------------------------------------------------------------------------------
-clusterJ("complete",3,30)
+#Dado un número de clústers k determinar la altura requerida 
+#para que tengamos el número de clúster k.
+clustersD <- clusterJD(df, distancia, 1:2, "complete", 3)
+#Generamos la matriz de confusion
+MatrixConfusionCJDC <- matrizconfusion(df$class, clustersD)
+
+#**********************************************************
+#Dada una altura h (una medida de disimilaridad) determinar 
+#el número de clústers que se obtienen.
+clustersH <- clusterJH(df, distancia, 1:2, "complete", 30)
+#Generamos la matriz de confusion
+MatrixConfusionCJHC <- matrizconfusion(df$class, clustersH)
 #--------------------------------------------------------------------------------------
                                     #METHOD SINGLE
 #--------------------------------------------------------------------------------------
-clusterJ("single",3,30)
+#Dado un número de clústers k determinar la altura requerida 
+#para que tengamos el número de clúster k.
+clustersD <- clusterJD(df, distancia, 1:2, "single", 3)
+#Generamos la matriz de confusion
+MatrixConfusionCJDS <- matrizconfusion(df$class, clustersD)
+
+#**********************************************************
+#Dada una altura h (una medida de disimilaridad) determinar 
+#el número de clústers que se obtienen.
+clustersH <- clusterJH(df, distancia, 1:2, "single", 30)
+#Generamos la matriz de confusion
+MatrixConfusionCJHS <- matrizconfusion(df$class, clustersH)
+
 #--------------------------------------------------------------------------------------
                                     #METHOD AVERAGE
 #--------------------------------------------------------------------------------------
-clusterJ("average",3,15)
+#Dado un número de clústers k determinar la altura requerida 
+#para que tengamos el número de clúster k.
+clustersD <- clusterJD(df, distancia, 1:2, "average", 3)
+#Generamos la matriz de confusion
+MatrixConfusionCJDA <- matrizconfusion(df$class, clustersD)
+
+#**********************************************************
+#Dada una altura h (una medida de disimilaridad) determinar 
+#el número de clústers que se obtienen.
+clustersH <- clusterJH(df, distancia, 1:2, "average", 15)
+#Generamos la matriz de confusion
+MatrixConfusionCJHA <- matrizconfusion(df$class, clustersH)
+
 #--------------------------------------------------------------------------------------
                                     #METHOD ward.D
 #--------------------------------------------------------------------------------------
-clusterJ("ward.D",3,10000)
+#Dado un número de clústers k determinar la altura requerida 
+#para que tengamos el número de clúster k.
+clustersD <- clusterJD(df, distancia, 1:2, "ward.D", 3)
+#Generamos la matriz de confusion
+MatrixConfusionCJDW <- matrizconfusion(df$class, clustersD)
+
+#**********************************************************
+#Dada una altura h (una medida de disimilaridad) determinar 
+#el número de clústers que se obtienen.
+clustersH <- clusterJH(df, distancia, 1:2, "ward.D", 10000)
+#Generamos la matriz de confusion
+MatrixConfusionCJHW <- matrizconfusion(df$class, clustersH)
