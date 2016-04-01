@@ -50,9 +50,9 @@ df$class[2000:2999] <- 3
 
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = df$class)
 
-df[df$class == 1] <- 0
-df[df$class == 2] <- 1
-df[df$class == 3] <- 2
+df$class[df$class == 1] <- 0
+df$class[df$class == 2] <- 1
+df$class[df$class == 3] <- 2
 
 #Observamos cuantos elementos hay de cada clase.
 table(df$class)

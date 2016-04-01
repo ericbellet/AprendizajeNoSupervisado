@@ -36,3 +36,8 @@ MatrixConfusion <- matrizconfusion(df$class,clusters)
 #****************************************************************************************
                                 #Implementacion k-medias
 #****************************************************************************************
+kmedias <- function(df, k, maxIter){
+  
+  
+  return()
+}
