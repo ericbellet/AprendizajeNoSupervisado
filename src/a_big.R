@@ -1,11 +1,15 @@
-
 setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
 source("src/funciones.R")
+name = "a_big.csv"
 #Lectura de datos.
-df = read.csv(file = "data/a_big.csv")
+df = read.csv(file = "data/a_big.csv", header = F)
 #Modificamos el nombre de las columnas por comodidad.
 colnames(df) <- c("x","y","class")
-
+#Coloco las clases del 1:n
+df$class = as.numeric(df$class)
+if (min(df$class) == 0){
+  df$class <- df$class + 1
+}
 #****************************************************************************************
 #Analisis exploratorio del dataset
 #****************************************************************************************
@@ -14,11 +18,11 @@ head(df)
 
 #Observamos cuantos elementos hay de cada clase.
 table(df$class)
-#0      1      2 
-#100000 100000  99999 
+#1       2        3
+#100000 100000  100000 
 
 #Grafico 
-plot(df$x, df$y)
+plot(df$x, df$y, xlab = "x", ylab = "y", main = name)
 #Podemos observar 3 conglomerados
 
 length(unique(df$class))
@@ -27,12 +31,12 @@ length(unique(df$class))
                                           #K-MEDIAS
 #****************************************************************************************
 #Aplicamos k=3 ya que identificamos 3 conglomerados y existen 3 clases.
-#kmedias(Dataframe, Columnas,K)
-clusters <- kmedias(df,1:2,3)
+#kmedias(Dataframe, Columnas, K, name)
+clusters <- kmedias(df, 1:2, 3, name)
 
 #Generamos la matriz de confusion
 MatrixConfusion <- matrizconfusion(df$class,clusters)
-
+MatrixConfusion
 #****************************************************************************************
                                 #Implementacion k-medias
 #****************************************************************************************

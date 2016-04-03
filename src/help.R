@@ -1,18 +1,24 @@
 setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
 source("src/funciones.R")
 library(rgl)
-
+name = "help.csv"
 #Lectura de datos.
-df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/help.csv")
+df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/help.csv", header = F)
 #Modificamos el nombre de las columnas por comodidad.
 colnames(df) <- c("x","y","z","class")
+#Ordenamos la columna clase
 df <- df[ order(df$class), ]
+#****************************************************************************************
+#                   Analisis exploratorio del dataset
+#****************************************************************************************
+#Matriz de dispersion
+plot(df)
 
-  #. Cuántos clústers ve en el dataset help ? 
+#. Cuántos clústers ve en el dataset help ? 
 #3
 
 #. Qué pasa al aplicar la regla de asignación de clases en este dataset? 
-#Colocar en la misma clase las 2 S.
+#Las 2 S las clasifica mal.
 
 #. Qué solución daría para asignar de manera correcta los valores de las clases y 
 #pueda analizar el desempeño del algoritmo de clustering de manera correcta? 
@@ -27,37 +33,20 @@ reglas <- function(x,i){
   }
 }
 
-reglas2 <- function(x,i){
-  
-  if ((i %% 2 == 0) == TRUE){
-    return(2)
-  }else{
-    return(1)
-  }
-}
-
-for (x in 1:204) {
+for (x in 1:2000) {
   
   df$class[x] <- reglas(df$class[x],x)
 }
 
-for (x in 205:1999) {
-  
-  df$class[x] <- reglas2(df$class[x],x)
-}
-
-df$class[2000:2999] <- 3
+df$class[2000:3000] <- 3
 
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = df$class)
 
-df$class[df$class == 1] <- 0
-df$class[df$class == 2] <- 1
-df$class[df$class == 3] <- 2
 
 #Observamos cuantos elementos hay de cada clase.
 table(df$class)
-#0    1    2 
-#1000  999 1000
+#1    2    3 
+#1000  1000 1000
 
 length(unique(df$class))
 #Existen 3 clases.
@@ -66,7 +55,7 @@ length(unique(df$class))
 #****************************************************************************************
 #Aplicamos k=3 ya que identificamos 3 conglomerados.
 #kmedias(Dataframe, Columnas,K)
-clusters <- kmedias(df, 1:3, 3)
+clusters <- kmedias(df, 1:3, 3, name)
 
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clusters)
 #Generamos la matriz de confusion
@@ -90,7 +79,7 @@ distancia = dist(datos)
 #--------------------------------------------------------------------------------------
 #Dado un número de clústers k determinar la altura requerida 
 #para que tengamos el número de clúster k.
-clustersD <- clusterJD(df, distancia, 1:3, "complete", 3)
+clustersD <- clusterJD(df, distancia, 1:3, "complete", 3, name)
 #Generamos la matriz de confusion
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersD)
 MatrixConfusionCJDC <- matrizconfusion(df$class, clustersD)
@@ -98,7 +87,7 @@ MatrixConfusionCJDC <- matrizconfusion(df$class, clustersD)
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el número de clústers que se obtienen.
-clustersH <- clusterJH(df, distancia, 1:3, "complete", 50)
+clustersH <- clusterJH(df, distancia, 1:3, "complete", 50, name)
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersH)
 #Generamos la matriz de confusion
 MatrixConfusionCJHC <- matrizconfusion(df$class, clustersH)
@@ -108,7 +97,7 @@ MatrixConfusionCJHC <- matrizconfusion(df$class, clustersH)
 #--------------------------------------------------------------------------------------
 #Dado un número de clústers k determinar la altura requerida 
 #para que tengamos el número de clúster k.
-clustersD <- clusterJD(df, distancia, 1:3, "single", 3)
+clustersD <- clusterJD(df, distancia, 1:3, "single", 3, name)
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersD)
 #Generamos la matriz de confusion
 MatrixConfusionCJDS <- matrizconfusion(df$class, clustersD)
@@ -116,7 +105,7 @@ MatrixConfusionCJDS <- matrizconfusion(df$class, clustersD)
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el número de clústers que se obtienen.
-clustersH <- clusterJH(df, distancia, 1:3, "single", 5)
+clustersH <- clusterJH(df, distancia, 1:3, "single", 5, name)
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersH)
 #Generamos la matriz de confusion
 MatrixConfusionCJHS <- matrizconfusion(df$class, clustersH)
@@ -126,7 +115,7 @@ MatrixConfusionCJHS <- matrizconfusion(df$class, clustersH)
 #--------------------------------------------------------------------------------------
 #Dado un número de clústers k determinar la altura requerida 
 #para que tengamos el número de clúster k.
-clustersD <- clusterJD(df, distancia, 1:3, "average", 3)
+clustersD <- clusterJD(df, distancia, 1:3, "average", 3, name)
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersD)
 #Generamos la matriz de confusion
 MatrixConfusionCJDA <- matrizconfusion(df$class, clustersD)
@@ -134,7 +123,7 @@ MatrixConfusionCJDA <- matrizconfusion(df$class, clustersD)
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el número de clústers que se obtienen.
-clustersH <- clusterJH(df, distancia, 1:3, "average", 30)
+clustersH <- clusterJH(df, distancia, 1:3, "average", 30, name)
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersH)
 #Generamos la matriz de confusion
 MatrixConfusionCJHA <- matrizconfusion(df$class, clustersH)
@@ -144,7 +133,7 @@ MatrixConfusionCJHA <- matrizconfusion(df$class, clustersH)
 #--------------------------------------------------------------------------------------
 #Dado un número de clústers k determinar la altura requerida 
 #para que tengamos el número de clúster k.
-clustersD <- clusterJD(df, distancia, 1:3, "ward.D", 3)
+clustersD <- clusterJD(df, distancia, 1:3, "ward.D", 3, name)
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersD)
 #Generamos la matriz de confusion
 MatrixConfusionCJDW <- matrizconfusion(df$class, clustersD)
@@ -152,7 +141,7 @@ MatrixConfusionCJDW <- matrizconfusion(df$class, clustersD)
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el número de clústers que se obtienen.
-clustersH <- clusterJH(df, distancia, 1:3, "ward.D", 10000)
+clustersH <- clusterJH(df, distancia, 1:3, "ward.D", 10000, name)
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersH)
 #Generamos la matriz de confusion
 MatrixConfusionCJHW <- matrizconfusion(df$class, clustersH)
