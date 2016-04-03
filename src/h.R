@@ -3,7 +3,7 @@ source("src/funciones.R")
 name = "h.csv"
 library(rgl)
 library('FactoMineR')
-
+library(pROC)
 #Lectura de datos.
 df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/h.csv", header = F)
 #Modificamos el nombre de las columnas por comodidad.
@@ -77,12 +77,20 @@ plot3d(df$x, df$y, df$z, type = "s",size = 2, col = df$class)
 #****************************************************************************************
 #Aplicamos k=11 ya que identificamos 11 conglomerados.
 #kmedias(Dataframe, Columnas,K)
-clusters <- kmedias(df, 1:3, 11, name)
+modeloK <- kmedias(df, 1:3, 11, name)
 
-plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clusters)
+plot3d(df$x, df$y, df$z, type = "s",size = 2, col = modeloK$cluster)
 #Generamos la matriz de confusion
-MatrixConfusionK <- matrizconfusion(df$class,clusters)
+MatrixConfusionK <- matrizconfusion(df$class,modeloK$cluster)
 MatrixConfusionK
+
+#Calculamos la precision del modelo
+PrecisionK <- precision(MatrixConfusionK)
+PrecisionK
+
+#Generamos la curva de ROC
+modeloKROC <- roc(df$class, modeloK$cluster)
+plot(modeloKROC,type="l",col="red")
 #****************************************************************************************
 #                             Cluster Jerarquicos
 #****************************************************************************************
@@ -105,6 +113,14 @@ clustersD <- clusterJD(df, distancia, 1:3, "complete", 11, name)
 plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersD)
 MatrixConfusionCJDC <- matrizconfusion(df$class, clustersD)
 MatrixConfusionCJDC
+
+#Calculamos la precision del modelo
+PrecisionDC <- precision(MatrixConfusionCJDC)
+PrecisionDC
+
+#Generamos la curva de ROC
+modeloDC <- roc(df$class, clustersD)
+plot(modeloDC,type="l",col="red")
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el número de clústers que se obtienen.
@@ -113,6 +129,14 @@ plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersH)
 #Generamos la matriz de confusion
 MatrixConfusionCJHC <- matrizconfusion(df$class, clustersH)
 MatrixConfusionCJHC
+
+#Calculamos la precision del modelo
+PrecisionHC <- precision(MatrixConfusionCJHC)
+PrecisionHC
+
+#Generamos la curva de ROC
+modeloHC <- roc(df$class, clustersH)
+plot(modeloHC,type="l",col="red")
 #--------------------------------------------------------------------------------------
 #                               METHOD SINGLE
 #--------------------------------------------------------------------------------------
@@ -123,6 +147,14 @@ plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersD)
 #Generamos la matriz de confusion
 MatrixConfusionCJDS <- matrizconfusion(df$class, clustersD)
 MatrixConfusionCJDS
+
+#Calculamos la precision del modelo
+PrecisionDS <- precision(MatrixConfusionCJDS)
+PrecisionDS
+
+#Generamos la curva de ROC
+modeloDS <- roc(df$class, clustersD)
+plot(modeloDS,type="l",col="red")
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el número de clústers que se obtienen.
@@ -131,6 +163,14 @@ plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersH)
 #Generamos la matriz de confusion
 MatrixConfusionCJHS <- matrizconfusion(df$class, clustersH)
 MatrixConfusionCJHS
+
+#Calculamos la precision del modelo
+PrecisionHS <- precision(MatrixConfusionCJHS)
+PrecisionHS
+
+#Generamos la curva de ROC
+modeloHS <- roc(df$class, clustersH)
+plot(modeloHS,type="l",col="red")
 #--------------------------------------------------------------------------------------
 #                               METHOD AVERAGE
 #--------------------------------------------------------------------------------------
@@ -141,6 +181,14 @@ plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersD)
 #Generamos la matriz de confusion
 MatrixConfusionCJDA <- matrizconfusion(df$class, clustersD)
 MatrixConfusionCJDA
+
+#Calculamos la precision del modelo
+PrecisionDA <- precision(MatrixConfusionCJDA)
+PrecisionDA
+
+#Generamos la curva de ROC
+modeloDA <- roc(df$class, clustersD)
+plot(modeloDA,type="l",col="red")
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el número de clústers que se obtienen.
@@ -149,6 +197,14 @@ plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersH)
 #Generamos la matriz de confusion
 MatrixConfusionCJHA <- matrizconfusion(df$class, clustersH)
 MatrixConfusionCJHA
+
+#Calculamos la precision del modelo
+PrecisionHA <- precision(MatrixConfusionCJHA)
+PrecisionHA
+
+#Generamos la curva de ROC
+modeloHA <- roc(df$class, clustersH)
+plot(modeloHA,type="l",col="red")
 #--------------------------------------------------------------------------------------
 #                             METHOD ward.D
 #--------------------------------------------------------------------------------------
@@ -159,6 +215,14 @@ plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersD)
 #Generamos la matriz de confusion
 MatrixConfusionCJDW <- matrizconfusion(df$class, clustersD)
 MatrixConfusionCJDW
+
+#Calculamos la precision del modelo
+PrecisionDW <- precision(MatrixConfusionCJDW)
+PrecisionDW
+
+#Generamos la curva de ROC
+modeloDW <- roc(df$class, clustersD)
+plot(modeloDW,type="l",col="red")
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el número de clústers que se obtienen.
@@ -167,3 +231,21 @@ plot3d(df$x, df$y, df$z, type = "s",size = 2, col = clustersH)
 #Generamos la matriz de confusion
 MatrixConfusionCJHW <- matrizconfusion(df$class, clustersH)
 MatrixConfusionCJHW
+
+#Calculamos la precision del modelo
+PrecisionHW <- precision(MatrixConfusionCJHW)
+PrecisionHW
+
+#Generamos la curva de ROC
+modeloHW <- roc(df$class, clustersH)
+plot(modeloHW,type="l",col="red")
+
+#--------------------------------------------------------------------------------------
+#                                 MEJOR MODELO
+#--------------------------------------------------------------------------------------
+precisiones <- c(PrecisionK, PrecisionDC, PrecisionHC, PrecisionDS, PrecisionHS, PrecisionDA, 
+                 PrecisionHA, PrecisionDW, PrecisionHW)
+x <- which.max(precisiones)
+mejormodelo <- bestmodel(x)
+cat("El mejor modelo es: ", mejormodelo, ", que posee una precision de: ", precisiones[x], ".")
+

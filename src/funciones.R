@@ -11,7 +11,7 @@ kmedias <- function(df, columns, k, name){
   # Ahora graficamos los centroides 
   points(x = modelo.kmedias$centers[, columns], col = 4:8, pch = 19, cex = 3)
   
-  return(modelo.kmedias$cluster)
+  return(modelo.kmedias)
 }
 #****************************************************************************************
                                   #MATRIZ DE CONFUSION
@@ -105,4 +105,36 @@ clusterJH <- function(df, distancia, columns, method, h, name){
   plot(df[, columns], col = corteH, main = paste(c("Cluster jerarquico H: ", name)))
   
   return(corteH)
+}
+#****************************************************************************************
+#                                 PRECISION DEL MODELO
+#****************************************************************************************
+precision <- function(m){
+#Precision
+#P = (a+d)/(a+b+c+d)
+  return(sum(diag(m)) /sum(m))
+}
+#****************************************************************************************
+#                           MEJOR MODELO SEGUN LA PRECISION
+#****************************************************************************************
+bestmodel <- function(x){
+  if (x == 1){
+    return("K-MEDIAS")
+  }else if (x == 2){
+    return("CLASIFICACION JERARQUICA K: METHOD COMPLETE")
+  }else if (x == 3){
+    return("CLASIFICACION JERARQUICA H: METHOD COMPLETE")
+  }else if (x == 4){
+    return("CLASIFICACION JERARQUICA K: METHOD SINGLE")
+  }else if (x == 5){
+    return("CLASIFICACION JERARQUICA H: METHOD SINGLE")
+  }else if (x == 6){
+    return("CLASIFICACION JERARQUICA K: METHOD AVERAGE")
+  }else if (x == 7){
+    return("CLASIFICACION JERARQUICA H: METHOD AVERAGE")
+  }else if (x == 8){
+    return("CLASIFICACION JERARQUICA K: METHOD WARD.D")
+  }else{
+    return("CLASIFICACION JERARQUICA H: METHOD WARD.D")
+  }
 }

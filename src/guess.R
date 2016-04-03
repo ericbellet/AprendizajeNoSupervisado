@@ -33,7 +33,7 @@ plot(InerciaIC, col = "blue", type = "b", main = "Codo de Jambu")
 #****************************************************************************************
 #Aplicamos k=2 ya que identificamos 2 conglomerados.
 #kmedias(Dataframe, Columnas,K)
-clusters <- kmedias(df, 1:2, 2, name)
+modeloK <- kmedias(df, 1:2, 2, name)
 
 #****************************************************************************************
                                     #CLUSTER JERARQUICO

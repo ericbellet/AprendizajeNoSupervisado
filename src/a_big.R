@@ -32,11 +32,19 @@ length(unique(df$class))
 #****************************************************************************************
 #Aplicamos k=3 ya que identificamos 3 conglomerados y existen 3 clases.
 #kmedias(Dataframe, Columnas, K, name)
-clusters <- kmedias(df, 1:2, 3, name)
+modeloK <- kmedias(df, 1:2, 3, name)
 
 #Generamos la matriz de confusion
-MatrixConfusion <- matrizconfusion(df$class,clusters)
+MatrixConfusion <- matrizconfusion(df$class,modeloK$cluster)
 MatrixConfusion
+
+#Calculamos la precision del modelo
+PrecisionK <- precision(MatrixConfusionK)
+PrecisionK
+
+#Generamos la curva de ROC
+modeloKROC <- roc(df$class, modeloK$cluster)
+plot(modeloKROC,type="l",col="red")
 #****************************************************************************************
                                 #Implementacion k-medias
 #****************************************************************************************
