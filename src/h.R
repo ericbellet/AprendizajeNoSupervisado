@@ -8,11 +8,6 @@ colnames(df) <- c("x","y","z","class")
 #df <- df[ order(df$class), ]
 
 #*********************REGLA PARA ASIGNAR CLASES***************************
-for (x in 1:nrow(df)) {
-  
-  df$class[x] <- reglas(df$class[x])
-}
-
 reglas <- function(x){
   if (x < 4.99735){
     return(0)
@@ -37,6 +32,11 @@ reglas <- function(x){
   }else{
     return(10)
   }
+}
+
+for (x in 1:nrow(df)) {
+  
+  df$class[x] <- reglas(df$class[x])
 }
 
 #****************************************************************************************

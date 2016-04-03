@@ -16,26 +16,57 @@ kmedias <- function(df,columns,k){
 #****************************************************************************************
                                   #MATRIZ DE CONFUSION
 #****************************************************************************************
-matrizconfusion <- function(class, clusters){
-  x <- table(class, clusters, dnn=c("Clase", "Cluster"))
-  posicion <- vector(mode = "numeric", length = nrow(x))
-  for (j in 1:ncol(x)) {
-    maximo <- 0
+matrizconfusion = function(class, clusters){
+  x <- table(class, clusters, dnn=c("Clase", "Cluster")) 
+  colnames(x) <- 0:(ncol(x)-1) #Nombres
+  x1 <- x #Para buscar los maximos
+  x2 <- x #Para asignar columnas
+  #Tabla vacia
+  for (h in 1:nrow(x1)) {
+    x1[h,] <- -1
+  }
+  
+  #Mientras la matriz no sea vacia.
+  while (empty(x) == F) {
+    maximo <- -1
     for (i in 1:nrow(x)) {
-      if (maximo <= x[i,j]){
-        maximo <- x[i,j]
-        posicion[j] <- i
+      for (j in 1:ncol(x)) {
+        if (x[i,j] > maximo){
+          maximo <- x[i,j]
+          
+          mi <- i
+          mj <- j
+        }#endif
+      }#endfor
+    }#endfor
+    #Si no existe un valor en la diagonal.
+    if (x1[mi,mi] == -1){
+      
+      x1[,mi] <- x2[,mj]
+      x[,mj] <- -1
+    }else{
+    #Si existe, probar con otro maximo
+      x[mi,mj] <- -1
+    }#endif
+   
+    
+  }#endwhile
+  return(x1)
+}
+
+#Funcion que me retorna TRUE si la tabla esta vacia.
+empty <- function(x){
+  boolean <- T
+  for (i in 1:nrow(x)) {
+    for (j in 1:ncol(x)) {
+      if (x[i,j] != -1){
+        boolean <- F
       }
     }
   }
-  colnames(x) <- 0:(ncol(x)-1)
-  z <- x
-  
-  for (i in 1:length(posicion)) {
-    z[i,] <- x[posicion[i],] 
-  }
-  return(z)
+  return(boolean)
 }
+
 #****************************************************************************************
                                   #CLUSTERS JERARQUICOS
 #****************************************************************************************
