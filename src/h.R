@@ -8,12 +8,15 @@ library(pROC)
 df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/h.csv", header = F)
 #Modificamos el nombre de las columnas por comodidad.
 colnames(df) <- c("x","y","z","class")
-#df <- df[ order(df$class), ]
+
 #Coloco las clases del 1:n
 df$class = as.numeric(df$class)
 if (min(df$class) == 0){
   df$class <- df$class + 1
 }
+
+#Ordenamos la columna clase
+df <- df[ order(df$class), ]
 #****************************************************************************************
 #                   Analisis exploratorio del dataset
 #****************************************************************************************

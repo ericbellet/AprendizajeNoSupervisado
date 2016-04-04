@@ -49,7 +49,14 @@ plot(modeloKROC,type="l",col="red")
                                 #Implementacion k-medias
 #****************************************************************************************
 kmedias <- function(df, k, maxIter){
-  
-  
+  """
+  Selects K centroids (K rows chosen at random)
+  Assigns each data point to its closest centroid
+  Recalculates the centroids as the average of all data points in a
+  cluster (i.e., the centroids are p-length mean vectors, where p is the number of variables)
+  Assigns data points to their closest centroids
+  Continues steps 3 and 4 until the observations are not reassigned or the maximum number of 
+  iterations (R uses 10 as a default) is reached.
+  """
   return()
 }

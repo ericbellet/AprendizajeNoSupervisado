@@ -10,6 +10,9 @@ df$class = as.numeric(df$class)
 if (min(df$class) == 0){
   df$class <- df$class + 1
 }
+
+#Ordenamos la columna clase
+df <- df[ order(df$class), ]
 #****************************************************************************************
                             #Analisis exploratorio del dataset
 #****************************************************************************************
@@ -37,6 +40,7 @@ modeloK <- kmedias(df, 1:2, 3, name)
 #Generamos la matriz de confusion
 MatrixConfusionK <- matrizconfusion(df$class,modeloK$cluster)
 MatrixConfusionK
+
 
 #Calculamos la precision del modelo
 PrecisionK <- precision(MatrixConfusionK)
@@ -67,6 +71,29 @@ clustersD <- clusterJD(df, distancia, 1:2, "complete", 3, name)
 MatrixConfusionCJDC <- matrizconfusion(df$class, clustersD)
 MatrixConfusionCJDC
 
+elem <- table(df$class)
+elem <- as.vector(elem)
+init <- table(df$class, clustersD)
+for (h in 1:nrow(init)) {
+  init[h,] <- 0
+}
+m <- 1
+z <- 0
+for (i in 1:length(elem)){
+  
+  n <- elem[i]
+  n <- n + z
+  t <- table(clustersD[m:n])
+  c <- names(t)
+  t <- as.vector(t)
+  
+  m <- n + 1
+  z <- n
+  for (j in 1:length(t)) {
+    init[i, as.numeric(c[j])] <- t[j]
+  }
+  
+}#endfor que recorre
 #Calculamos la precision del modelo
 PrecisionDC <- precision(MatrixConfusionCJDC)
 PrecisionDC

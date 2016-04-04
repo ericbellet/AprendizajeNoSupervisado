@@ -14,9 +14,9 @@ kmedias <- function(df, columns, k, name){
   return(modelo.kmedias)
 }
 #****************************************************************************************
-                                  #MATRIZ DE CONFUSION
+                                  #MATRIZ DE CONFUSION v2
 #****************************************************************************************
-matrizconfusion = function(class, clusters){
+matrizconfusionv2 = function(class, clusters){
   x <- table(class, clusters, dnn=c("Clase", "Cluster")) 
   #colnames(x) <- 0:(ncol(x)-1) #Nombres
   x1 <- x #Para buscar los maximos
@@ -66,7 +66,56 @@ empty <- function(x){
   }
   return(boolean)
 }
+#****************************************************************************************
+#                                     MATRIZ DE CONFUSION
+#****************************************************************************************
+matrizconfusionv = function(class, clusters){
+  #Multiplico * 10 simplemente para poder reemplazar los numeros de forma correcta.
+  clusters <- clusters * 10
+  #Obtengo los valores unicos ordenados de la forma del modelo.
+  ordermodel <- unique(clusters)
+  
+  #Cambio el nombre de los clusters ordenados crecientemente.
+  for (i in 1:length(clusters)) {
+    for (j in 1:length(ordermodel)) {
+      if (clusters[i] == ordermodel[j]){
+        clusters[i] <- j
+      }
+    }
+  }
+  #Guardo cuantas clases hay
+  elem <- table(df$class)
+  elem <- as.vector(elem)
+  
+  #Inicializo una tabla vacia con el tamano adecuado
+  init <- table(df$class, clusters)
+  for (h in 1:nrow(init)) {
+    init[h,] <- 0
+  }
+  
+  #M significa la posicion donde va empezar a leer en el modelo.
+  m <- 1
+  #z acumula las distancias a leer.
+  z <- 0
+  
+  #Recorro clase por clase.
+  for (i in 1:length(elem)){
+    
+    n <- elem[i]
+    n <- n + z
+    t <- table(clusters[m:n])
+    c <- names(t)
+    t <- as.vector(t)
+    
+    m <- n + 1
+    z <- n
+    for (j in 1:length(t)) {
+      init[i, as.numeric(c[j])] <- t[j]
+    }
+    
+  }#endfor que recorre
 
+}#endfunction
 #****************************************************************************************
                                   #CLUSTERS JERARQUICOS
 #****************************************************************************************
