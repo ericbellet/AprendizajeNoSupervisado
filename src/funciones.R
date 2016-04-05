@@ -2,6 +2,16 @@
                                         #K-MEDIAS
 #****************************************************************************************
 kmedias <- function(df, columns, k, name){
+  # Aplica el algoritmo de k-medias al dataframe.
+  #
+  # Args:
+  #   df: Dataframe que se le desea aplicar k-medias.
+  #   columns: Columnas del dataframe que se le desea aplicar k-medias.
+  #   k: Número de clusters que se desean.
+  #   name: Nombre del dataframe.
+  #
+  # Returns:
+  #   Retorna el modelo generado.
   
   modelo.kmedias = kmeans(x = df[, columns], centers = k)
   
@@ -13,63 +23,20 @@ kmedias <- function(df, columns, k, name){
   
   return(modelo.kmedias)
 }
-#****************************************************************************************
-                                  #MATRIZ DE CONFUSION v2
-#****************************************************************************************
-matrizconfusionv2 = function(class, clusters){
-  x <- table(class, clusters, dnn=c("Clase", "Cluster")) 
-  #colnames(x) <- 0:(ncol(x)-1) #Nombres
-  x1 <- x #Para buscar los maximos
-  x2 <- x #Para asignar columnas
-  #Tabla vacia
-  for (h in 1:nrow(x1)) {
-    x1[h,] <- -1
-  }
-  
-  #Mientras la matriz no sea vacia.
-  while (empty(x) == F) {
-    maximo <- -1
-    for (i in 1:nrow(x)) {
-      for (j in 1:ncol(x)) {
-        if (x[i,j] > maximo){
-          maximo <- x[i,j]
-          
-          mi <- i
-          mj <- j
-        }#endif
-      }#endfor
-    }#endfor
-    #Si no existe un valor en la diagonal.
-    if (x1[mi,mi] == -1){
-      
-      x1[,mi] <- x2[,mj]
-      x[,mj] <- -1
-    }else{
-    #Si existe, probar con otro maximo
-      x[mi,mj] <- -1
-    }#endif
-   
-    
-  }#endwhile
-  return(x1)
-}
 
-#Funcion que me retorna TRUE si la tabla esta vacia.
-empty <- function(x){
-  boolean <- T
-  for (i in 1:nrow(x)) {
-    for (j in 1:ncol(x)) {
-      if (x[i,j] != -1){
-        boolean <- F
-      }
-    }
-  }
-  return(boolean)
-}
 #****************************************************************************************
 #                                     MATRIZ DE CONFUSION
 #****************************************************************************************
 matrizconfusionv = function(class, clusters){
+  # Genera la matriz de confusión asociada al modelo.
+  #
+  # Args:
+  #   class: Columna clase del dataframe.
+  #   clusters: Clusters generados por el modelo.
+  #
+  # Returns:
+  #   Retorna la matriz de confusión del modelo correspondiente.
+  
   #Multiplico * 10 simplemente para poder reemplazar los numeros de forma correcta.
   clusters <- clusters * 10
   #Obtengo los valores unicos ordenados de la forma del modelo.
@@ -119,8 +86,23 @@ matrizconfusionv = function(class, clusters){
 #****************************************************************************************
                                   #CLUSTERS JERARQUICOS
 #****************************************************************************************
-#Dado un nÃºmero de clÃºsters k determinar la altura requerida para que tengamos el nÃºmero de clÃºster k.
+#Dado un número de clusters k determinar la altura requerida para que tengamos el 
+#número de cluster k.
 clusterJD <- function(df, distancia, columns, method, k, name){
+  # Aplica el algoritmo de clusterización utilizando un k para determinar
+  # la altura.
+  #
+  # Args:
+  #   df: Dataframe que se le desea aplicar k-medias.
+  #   distancia: Matriz de distancias.
+  #   columns: Columnas del dataframe que se le desea aplicar k-medias.
+  #   method: Método deseado para aplicar el algoritmo (complete, single, average o ward.d).
+  #   k: Número de clusters que se desean.
+  #   name: Nombre del dataframe.
+  #
+  # Returns:
+  #   Retorna el modelo generado.
+  
   #Aplicamos cluster jerarquico utilizando el metodo correspondiente
   cluster = hclust(distancia, method = method)
   ############################################################
@@ -135,8 +117,23 @@ clusterJD <- function(df, distancia, columns, method, k, name){
   
   return(corteD)
 }
-#Dada una altura h (una medida de disimilaridad) determinar el nÃºmero de clÃºsters que se obtienen.
+############################################################
+#Dada una altura h (una medida de disimilaridad) determinar el número de clusters que se obtienen.
 clusterJH <- function(df, distancia, columns, method, h, name){
+  # Aplica el algoritmo de clusterización utilizando un k para determinar
+  # la altura.
+  #
+  # Args:
+  #   df: Dataframe que se le desea aplicar k-medias.
+  #   distancia: Matriz de distancias.
+  #   columns: Columnas del dataframe que se le desea aplicar k-medias.
+  #   method: Método deseado para aplicar el algoritmo (complete, single, average o ward.d).
+  #   h:  Medida de disimilaridad.
+  #   name: Nombre del dataframe.
+  #
+  # Returns:
+  #   Retorna el modelo generado.
+  
   #Aplicamos cluster jerarquico utilizando el metodo correspondiente
   cluster = hclust(distancia, method = method)
   #Graficamos el dendogram
@@ -159,6 +156,14 @@ clusterJH <- function(df, distancia, columns, method, h, name){
 #                                 PRECISION DEL MODELO
 #****************************************************************************************
 precision <- function(m){
+  # Calcula la precisión del modelo utilizando la matriz de confusión.
+  #
+  # Args:
+  #   m: Matriz de confusión.
+  #
+  # Returns:
+  #   Retorna la precisión del modelo.
+  
 #Precision
 #P = (a+d)/(a+b+c+d)
   return(sum(diag(m)) /sum(m))
@@ -167,6 +172,15 @@ precision <- function(m){
 #                           MEJOR MODELO SEGUN LA PRECISION
 #****************************************************************************************
 bestmodel <- function(x){
+  # Busca el mejor modelo.
+  #
+  # Args:
+  #   x: Modelo con mayor precisión.
+  #
+  # Returns:
+  #   Retorna el mejor modelo.
+  
+  
   if (x == 1){
     return("K-MEDIAS")
   }else if (x == 2){
