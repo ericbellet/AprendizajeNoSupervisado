@@ -159,64 +159,58 @@ Es una herramienta que permite la visualización del desempeño de un algoritmo qu
 
 ```{r}
 #****************************************************************************************
-#                                     MATRIZ DE CONFUSION
+#                                 MATRIZ DE CONFUSION
 #****************************************************************************************
 matrizconfusion = function(class, clusters){
-  # Genera la matriz de confusión asociada al modelo.
-  #
-  # Args:
-  #   class: Columna clase del dataframe.
-  #   clusters: Clusters generados por el modelo.
-  #
-  # Returns:
-  #   Retorna la matriz de confusión del modelo correspondiente.
+  x <- table(class, clusters, dnn=c("Clase", "Cluster")) 
+  colnames(x) <- 0:(ncol(x)-1) #Nombres
+  x1 <- x #Para buscar los maximos
+  x2 <- x #Para asignar columnas
+  #Tabla vacia
+  for (h in 1:nrow(x1)) {
+    x1[h,] <- -1
+  }
   
-  #Multiplico * 10 simplemente para poder reemplazar los numeros de forma correcta.
-  clusters <- clusters * 10
-  #Obtengo los valores unicos ordenados de la forma del modelo.
-  ordermodel <- unique(clusters)
-  
-  #Cambio el nombre de los clusters ordenados crecientemente.
-  for (i in 1:length(clusters)) {
-    for (j in 1:length(ordermodel)) {
-      if (clusters[i] == ordermodel[j]){
-        clusters[i] <- j
+  #Mientras la matriz no sea vacia.
+  while (empty(x) == F) {
+    maximo <- -1
+    for (i in 1:nrow(x)) {
+      for (j in 1:ncol(x)) {
+        if (x[i,j] > maximo){
+          maximo <- x[i,j]
+          
+          mi <- i
+          mj <- j
+        }#endif
+      }#endfor
+    }#endfor
+    #Si no existe un valor en la diagonal.
+    if (x1[mi,mi] == -1){
+      
+      x1[,mi] <- x2[,mj]
+      x[,mj] <- -1
+    }else{
+      #Si existe, probar con otro maximo
+      x[mi,mj] <- -1
+    }#endif
+    
+    
+  }#endwhile
+  return(x1)
+}
+
+#Funcion que me retorna TRUE si la tabla esta vacia.
+empty <- function(x){
+  boolean <- T
+  for (i in 1:nrow(x)) {
+    for (j in 1:ncol(x)) {
+      if (x[i,j] != -1){
+        boolean <- F
       }
     }
   }
-  #Guardo cuantas clases hay
-  elem <- table(class)
-  elem <- as.vector(elem)
-  
-  #Inicializo una tabla vacia con el tamano adecuado
-  init <- table(class, clusters, dnn=c("Clase", "Cluster"))
-  for (h in 1:nrow(init)) {
-    init[h,] <- 0
-  }
-  
-  #M significa la posicion donde va empezar a leer en el modelo.
-  m <- 1
-  #z acumula las distancias a leer.
-  z <- 0
-  
-  #Recorro clase por clase.
-  for (i in 1:length(elem)){
-    
-    n <- elem[i]
-    n <- n + z
-    t <- table(clusters[m:n])
-    c <- names(t)
-    t <- as.vector(t)
-    
-    m <- n + 1
-    z <- n
-    for (j in 1:length(t)) {
-      init[i, as.numeric(c[j])] <- t[j]
-    }
-    
-  }#endfor que recorre
-  return(init)
-}#endfunction
+  return(boolean)
+}
 
 ```
 
@@ -294,9 +288,10 @@ A continuación aplicaremos los siguientes objetivos a los datasets correspondien
 ###  **a.csv**
 * Preprocesamiento:
 ```{r}
+setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado/")
 name = "a.csv"
 #Lectura de datos.
-df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/a.csv", header = F)
+df = read.csv(file = "data/a.csv", header = F)
 #Modificamos el nombre de las columnas por comodidad.
 colnames(df) <- c("x","y","class")
 #Coloco las clases del 1:n
@@ -367,7 +362,7 @@ datos= as.matrix(datos)
 distancia = dist(datos)
 ```
 
-# Metódo complete:
+# Método complete:
 ```{r}
 #--------------------------------------------------------------------------------------
                                     #METHOD COMPLETE
@@ -403,7 +398,7 @@ modeloHC <- roc(df$class, clustersH)
 plot(modeloHC,type="l",col="red")
 ```
 
-# Metódo single:
+# Método single:
 ```{r}
 #--------------------------------------------------------------------------------------
                                     #METHOD SINGLE
@@ -439,7 +434,7 @@ modeloHS <- roc(df$class, clustersH)
 plot(modeloHS,type="l",col="red")
 ```
 
-# Metódo average:
+# Método average:
 ```{r}
 #--------------------------------------------------------------------------------------
                                     #METHOD AVERAGE
@@ -475,10 +470,10 @@ modeloHA <- roc(df$class, clustersH)
 plot(modeloHA,type="l",col="red")
 ```
 
-# Metódo ward.d:
+# Método ward.D
 ```{r}
 #--------------------------------------------------------------------------------------
-                                    #METHOD ward.D
+#METHOD ward.D
 #--------------------------------------------------------------------------------------
 #Dado un numero de clusters k determinar la altura requerida 
 #para que tengamos el numero de cluster k.
@@ -511,16 +506,120 @@ PrecisionHW
 modeloHW <- roc(df$class, clustersH)
 plot(modeloHW,type="l",col="red")
 ```
+
 # Mejor modelo
 ```{r}
 #--------------------------------------------------------------------------------------
 #                                 MEJOR MODELO
 #--------------------------------------------------------------------------------------
 precisiones <- c(PrecisionK, PrecisionDC, PrecisionHC, PrecisionDS, PrecisionHS, PrecisionDA, 
-       PrecisionHA, PrecisionDW, PrecisionHW)
+                 PrecisionHA, PrecisionDW, PrecisionHW)
 x <- which.max(precisiones)
 mejormodelo <- bestmodel(x)
 cat("El mejor modelo es: ", mejormodelo, ", que posee una precision de: ", precisiones[x], ".")
 
+```
+
+
+###  **a_big.csv**
+* Preprocesamiento:
+```{r}
+setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado/")
+name = "a_big.csv"
+#Lectura de datos.
+df = read.csv(file = "data/a_big.csv", header = F)
+#Modificamos el nombre de las columnas por comodidad.
+colnames(df) <- c("x","y","class")
+#Coloco las clases del 1:n
+df$class = as.numeric(df$class)
+if (min(df$class) == 0){
+  df$class <- df$class + 1
+}
+```
+* Analisis exploratorio del dataset:
+```{r}
+#****************************************************************************************
+#Analisis exploratorio del dataset
+#****************************************************************************************
+#Podemos observar que hay 3 columnas.
+head(df)
+
+#Observamos cuantos elementos hay de cada clase.
+table(df$class)
+#1       2        3
+#100000 100000  100000 
+
+#Grafico 
+plot(df$x, df$y, xlab = "x", ylab = "y", main = name)
+#Podemos observar 3 conglomerados
+
+length(unique(df$class))
+#Existen 3 clases.
+```
+
+# K-medias:
+```{r}
+#****************************************************************************************
+                                          #K-MEDIAS
+#****************************************************************************************
+#Aplicamos k=3 ya que identificamos 3 conglomerados y existen 3 clases.
+#kmedias(Dataframe, Columnas, K, name)
+modeloK <- kmedias(df, 1:2, 3, name)
+
+#Generamos la matriz de confusion
+MatrixConfusion <- matrizconfusion(df$class,modeloK$cluster)
+MatrixConfusion
+
+#Calculamos la precision del modelo
+PrecisionK <- precision(MatrixConfusionK)
+PrecisionK
+
+#Generamos la curva de ROC
+modeloKROC <- roc(df$class, modeloK$cluster)
+plot(modeloKROC,type="l",col="red")
+```
+
+# Clusters jerárquicos:
+Debido a que la matriz de distancia es demasiado grande y no cabe en memoria, no podemos realizar clusterización jerárquica.
+
+# Implementación K-medias:
+
+###  **good_luck.csv**
+* Preprocesamiento:
+```{r}
+
+```
+* Analisis exploratorio del dataset:
+```{r}
+
+```
+
+# K-medias:
+```{r}
+
+```
+
+# Clusters jerárquicos:
+```{r}
+
+```
+
+# Metódo complete:
+```{r}
+
+```
+
+# Metódo single:
+```{r}
+
+```
+
+# Metódo average:
+```{r}
+
+```
+
+# Mejor modelo
+```{r}
 
 ```

@@ -25,65 +25,58 @@ kmedias <- function(df, columns, k, name){
 }
 
 #****************************************************************************************
-#                                     MATRIZ DE CONFUSION
+#                                 MATRIZ DE CONFUSION
 #****************************************************************************************
 matrizconfusion = function(class, clusters){
-  # Genera la matriz de confusión asociada al modelo.
-  #
-  # Args:
-  #   class: Columna clase del dataframe.
-  #   clusters: Clusters generados por el modelo.
-  #
-  # Returns:
-  #   Retorna la matriz de confusión del modelo correspondiente.
+  x <- table(class, clusters, dnn=c("Clase", "Cluster")) 
+  colnames(x) <- 0:(ncol(x)-1) #Nombres
+  x1 <- x #Para buscar los maximos
+  x2 <- x #Para asignar columnas
+  #Tabla vacia
+  for (h in 1:nrow(x1)) {
+    x1[h,] <- -1
+  }
   
-  #Multiplico * 10 simplemente para poder reemplazar los numeros de forma correcta.
-  clusters <- clusters * 10
-  #Obtengo los valores unicos ordenados de la forma del modelo.
-  ordermodel <- unique(clusters)
-  
-  #Cambio el nombre de los clusters ordenados crecientemente.
-  for (i in 1:length(clusters)) {
-    for (j in 1:length(ordermodel)) {
-      if (clusters[i] == ordermodel[j]){
-        clusters[i] <- j
+  #Mientras la matriz no sea vacia.
+  while (empty(x) == F) {
+    maximo <- -1
+    for (i in 1:nrow(x)) {
+      for (j in 1:ncol(x)) {
+        if (x[i,j] > maximo){
+          maximo <- x[i,j]
+          
+          mi <- i
+          mj <- j
+        }#endif
+      }#endfor
+    }#endfor
+    #Si no existe un valor en la diagonal.
+    if (x1[mi,mi] == -1){
+      
+      x1[,mi] <- x2[,mj]
+      x[,mj] <- -1
+    }else{
+      #Si existe, probar con otro maximo
+      x[mi,mj] <- -1
+    }#endif
+    
+    
+  }#endwhile
+  return(x1)
+}
+
+#Funcion que me retorna TRUE si la tabla esta vacia.
+empty <- function(x){
+  boolean <- T
+  for (i in 1:nrow(x)) {
+    for (j in 1:ncol(x)) {
+      if (x[i,j] != -1){
+        boolean <- F
       }
     }
   }
-  #Guardo cuantas clases hay
-  elem <- table(class)
-  elem <- as.vector(elem)
-  
-  #Inicializo una tabla vacia con el tamano adecuado
-  init <- table(class, clusters, dnn=c("Clase", "Cluster"))
-  for (h in 1:nrow(init)) {
-    init[h,] <- 0
-  }
- 
-  #M significa la posicion donde va empezar a leer en el modelo.
-  m <- 1
-  #z acumula las distancias a leer.
-  z <- 0
-  
-  #Recorro clase por clase.
-  for (i in 1:length(elem)){
-    
-    n <- elem[i]
-    n <- n + z
-    t <- table(clusters[m:n])
-    c <- names(t)
-    t <- as.vector(t)
-    
-    m <- n + 1
-    z <- n
-    for (j in 1:length(t)) {
-      init[i, as.numeric(c[j])] <- t[j]
-    }
-    
-  }#endfor que recorre
-  
-  return(init)
-}#endfunction
+  return(boolean)
+}
 #****************************************************************************************
                                   #CLUSTERS JERARQUICOS
 #****************************************************************************************

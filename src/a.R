@@ -158,8 +158,9 @@ PrecisionHA
 #Generamos la curva de ROC
 modeloHA <- roc(df$class, clustersH)
 plot(modeloHA,type="l",col="red")
+
 #--------------------------------------------------------------------------------------
-                                    #METHOD ward.D
+#METHOD ward.D
 #--------------------------------------------------------------------------------------
 #Dado un numero de clusters k determinar la altura requerida 
 #para que tengamos el numero de cluster k.
@@ -195,10 +196,7 @@ plot(modeloHW,type="l",col="red")
 #                                 MEJOR MODELO
 #--------------------------------------------------------------------------------------
 precisiones <- c(PrecisionK, PrecisionDC, PrecisionHC, PrecisionDS, PrecisionHS, PrecisionDA, 
-       PrecisionHA, PrecisionDW, PrecisionHW)
+                 PrecisionHA, PrecisionDW, PrecisionHW)
 x <- which.max(precisiones)
 mejormodelo <- bestmodel(x)
 cat("El mejor modelo es: ", mejormodelo, ", que posee una precision de: ", precisiones[x], ".")
-
-
-
