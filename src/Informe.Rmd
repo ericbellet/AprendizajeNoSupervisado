@@ -2,7 +2,7 @@
 title: "Aprendizaje No Supervisado"
 author: "Eric Bellet"
 date: "2 de Abril de 2016"
-output: html_document
+output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
