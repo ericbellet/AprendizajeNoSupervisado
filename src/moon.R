@@ -30,7 +30,7 @@ length(unique(df$class))
 #****************************************************************************************
 #                     K-MEDIAS
 #****************************************************************************************
-#Aplicamos k=3 ya que identificamos 2 conglomerados y existen 2 clases.
+#Aplicamos k=2 ya que identificamos 2 conglomerados y existen 2 clases.
 #kmedias(Dataframe, Columnas,K)
 modeloK <- kmedias(df, 1:2, 2, name)
 

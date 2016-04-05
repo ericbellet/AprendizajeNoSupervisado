@@ -59,7 +59,7 @@ modeloKROC <- roc(df$class, modeloK$cluster)
 plot(modeloKROC,type="l",col="red")
 
 #****************************************************************************************
-#Cluster Jerarquicos
+#                                   Cluster Jerarquicos
 #****************************************************************************************
 #Copy del dataset
 datos = df
