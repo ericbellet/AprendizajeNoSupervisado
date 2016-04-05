@@ -51,15 +51,15 @@ matrizconfusion = function(class, clusters){
     }
   }
   #Guardo cuantas clases hay
-  elem <- table(df$class)
+  elem <- table(class)
   elem <- as.vector(elem)
   
   #Inicializo una tabla vacia con el tamano adecuado
-  init <- table(df$class, clusters)
+  init <- table(class, clusters, dnn=c("Clase", "Cluster"))
   for (h in 1:nrow(init)) {
     init[h,] <- 0
   }
-  
+ 
   #M significa la posicion donde va empezar a leer en el modelo.
   m <- 1
   #z acumula las distancias a leer.
@@ -81,6 +81,7 @@ matrizconfusion = function(class, clusters){
     }
     
   }#endfor que recorre
+  
   return(init)
 }#endfunction
 #****************************************************************************************

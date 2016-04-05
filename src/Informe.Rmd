@@ -185,11 +185,11 @@ matrizconfusion = function(class, clusters){
     }
   }
   #Guardo cuantas clases hay
-  elem <- table(df$class)
+  elem <- table(class)
   elem <- as.vector(elem)
   
   #Inicializo una tabla vacia con el tamano adecuado
-  init <- table(df$class, clusters)
+  init <- table(class, clusters, dnn=c("Clase", "Cluster"))
   for (h in 1:nrow(init)) {
     init[h,] <- 0
   }
@@ -287,7 +287,7 @@ A continuación aplicaremos los siguientes objetivos a los datasets correspondien
 
 * Usar métodos exploratorios. 
 
-* Elaborar soluciones a problemas especí???cos de cada dataset. 
+* Elaborar soluciones a problemas específcos de cada dataset. 
 
 * Usar herramientas de clustering.
 
@@ -329,7 +329,7 @@ length(unique(df$class))
 #Existen 3 clases.
 ```
 
-* K-medias:
+# K-medias:
 ```{r}
 #****************************************************************************************
                                        #K-MEDIAS
@@ -352,7 +352,7 @@ modeloKROC <- roc(df$class, modeloK$cluster)
 plot(modeloKROC,type="l",col="red")
 ```
 
-* Clusters jerárquicos:
+# Clusters jerárquicos:
 ```{r}
 #****************************************************************************************
                                   #CLUSTER JERARQUICOS
@@ -367,7 +367,7 @@ datos= as.matrix(datos)
 distancia = dist(datos)
 ```
 
-* Metódo complete:
+# Metódo complete:
 ```{r}
 #--------------------------------------------------------------------------------------
                                     #METHOD COMPLETE
@@ -379,29 +379,6 @@ clustersD <- clusterJD(df, distancia, 1:2, "complete", 3, name)
 MatrixConfusionCJDC <- matrizconfusion(df$class, clustersD)
 MatrixConfusionCJDC
 
-elem <- table(df$class)
-elem <- as.vector(elem)
-init <- table(df$class, clustersD)
-for (h in 1:nrow(init)) {
-  init[h,] <- 0
-}
-m <- 1
-z <- 0
-for (i in 1:length(elem)){
-  
-  n <- elem[i]
-  n <- n + z
-  t <- table(clustersD[m:n])
-  c <- names(t)
-  t <- as.vector(t)
-  
-  m <- n + 1
-  z <- n
-  for (j in 1:length(t)) {
-    init[i, as.numeric(c[j])] <- t[j]
-  }
-  
-}#endfor que recorre
 #Calculamos la precision del modelo
 PrecisionDC <- precision(MatrixConfusionCJDC)
 PrecisionDC
@@ -426,7 +403,7 @@ modeloHC <- roc(df$class, clustersH)
 plot(modeloHC,type="l",col="red")
 ```
 
-* Metódo single:
+# Metódo single:
 ```{r}
 #--------------------------------------------------------------------------------------
                                     #METHOD SINGLE
@@ -448,7 +425,7 @@ plot(modeloDS,type="l",col="red")
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el numero de clusters que se obtienen.
-clustersH <- clusterJH(df, distancia, 1:2, "single", 30, name)
+clustersH <- clusterJH(df, distancia, 1:2, "single", 3.5, name)
 #Generamos la matriz de confusion
 MatrixConfusionCJHS <- matrizconfusion(df$class, clustersH)
 MatrixConfusionCJHS
@@ -462,7 +439,7 @@ modeloHS <- roc(df$class, clustersH)
 plot(modeloHS,type="l",col="red")
 ```
 
-* Metódo average:
+# Metódo average:
 ```{r}
 #--------------------------------------------------------------------------------------
                                     #METHOD AVERAGE
@@ -498,7 +475,7 @@ modeloHA <- roc(df$class, clustersH)
 plot(modeloHA,type="l",col="red")
 ```
 
-* Metódo ward.d:
+# Metódo ward.d:
 ```{r}
 #--------------------------------------------------------------------------------------
                                     #METHOD ward.D

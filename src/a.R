@@ -72,29 +72,6 @@ clustersD <- clusterJD(df, distancia, 1:2, "complete", 3, name)
 MatrixConfusionCJDC <- matrizconfusion(df$class, clustersD)
 MatrixConfusionCJDC
 
-elem <- table(df$class)
-elem <- as.vector(elem)
-init <- table(df$class, clustersD)
-for (h in 1:nrow(init)) {
-  init[h,] <- 0
-}
-m <- 1
-z <- 0
-for (i in 1:length(elem)){
-  
-  n <- elem[i]
-  n <- n + z
-  t <- table(clustersD[m:n])
-  c <- names(t)
-  t <- as.vector(t)
-  
-  m <- n + 1
-  z <- n
-  for (j in 1:length(t)) {
-    init[i, as.numeric(c[j])] <- t[j]
-  }
-  
-}#endfor que recorre
 #Calculamos la precision del modelo
 PrecisionDC <- precision(MatrixConfusionCJDC)
 PrecisionDC
@@ -137,7 +114,7 @@ plot(modeloDS,type="l",col="red")
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el numero de clusters que se obtienen.
-clustersH <- clusterJH(df, distancia, 1:2, "single", 30, name)
+clustersH <- clusterJH(df, distancia, 1:2, "single", 3.5, name)
 #Generamos la matriz de confusion
 MatrixConfusionCJHS <- matrizconfusion(df$class, clustersH)
 MatrixConfusionCJHS
