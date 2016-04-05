@@ -1,3 +1,4 @@
+library(pROC)
 setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
 source("src/funciones.R")
 name = "a.csv"
@@ -136,7 +137,7 @@ plot(modeloDS,type="l",col="red")
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el numero de clusters que se obtienen.
-clustersH <- clusterJH(df, distancia, 1:2, "single", 30)
+clustersH <- clusterJH(df, distancia, 1:2, "single", 30, name)
 #Generamos la matriz de confusion
 MatrixConfusionCJHS <- matrizconfusion(df$class, clustersH)
 MatrixConfusionCJHS

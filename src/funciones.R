@@ -27,7 +27,7 @@ kmedias <- function(df, columns, k, name){
 #****************************************************************************************
 #                                     MATRIZ DE CONFUSION
 #****************************************************************************************
-matrizconfusionv = function(class, clusters){
+matrizconfusion = function(class, clusters){
   # Genera la matriz de confusión asociada al modelo.
   #
   # Args:
@@ -81,7 +81,7 @@ matrizconfusionv = function(class, clusters){
     }
     
   }#endfor que recorre
-
+  return(init)
 }#endfunction
 #****************************************************************************************
                                   #CLUSTERS JERARQUICOS
