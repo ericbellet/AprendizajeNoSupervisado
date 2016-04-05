@@ -176,7 +176,7 @@ plot(modeloDW,type="l",col="red")
 #**********************************************************
 #Dada una altura h (una medida de disimilaridad) determinar 
 #el número de clústers que se obtienen.
-clustersH <- clusterJH(df, distancia, 1:10, "ward.D", 80, name)
+clustersH <- clusterJH(df, distancia, 1:10, "ward.D", 90, name)
 #Generamos la matriz de confusion
 MatrixConfusionCJHW <- matrizconfusion(df$class, clustersH)
 MatrixConfusionCJHW

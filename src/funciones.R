@@ -29,7 +29,7 @@ kmedias <- function(df, columns, k, name){
 #****************************************************************************************
 matrizconfusion = function(class, clusters){
   x <- table(class, clusters, dnn=c("Clase", "Cluster")) 
-  colnames(x) <- 0:(ncol(x)-1) #Nombres
+  #colnames(x) <- 0:(ncol(x)-1) #Nombres
   x1 <- x #Para buscar los maximos
   x2 <- x #Para asignar columnas
   #Tabla vacia
