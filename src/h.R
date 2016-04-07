@@ -1,6 +1,6 @@
 setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
 source("src/funciones.R")
-name = "h.csv"
+name = ""
 library(rgl)
 library('FactoMineR')
 library(pROC)

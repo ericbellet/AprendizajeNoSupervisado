@@ -51,15 +51,102 @@ plot(modeloKROC,type="l",col="red")
 #****************************************************************************************
                                 #Implementacion k-medias
 #****************************************************************************************
-kmedias <- function(df, k, maxIter){
-  """
-  Selects K centroids (K rows chosen at random)
-  Assigns each data point to its closest centroid
-  Recalculates the centroids as the average of all data points in a
-  cluster (i.e., the centroids are p-length mean vectors, where p is the number of variables)
-  Assigns data points to their closest centroids
-  Continues steps 3 and 4 until the observations are not reassigned or the maximum number of 
-  iterations (R uses 10 as a default) is reached.
-  """
-  return()
+
+
+#********************************************************************************
+#                                     K-MEDIAS
+#********************************************************************************
+kmedias <- function(x, centers, dist, maxIter) {
+  # Aplica el algoritmo de k-medias al dataframe.
+  #
+  # Args:
+  #   df: Dataframe que se le desea aplicar k-medias.
+  #   centers: Centroides.
+  #   dist: Matriz de distancias
+  #   maxIter: Numero maximo de iteracciones.
+  #
+  # Returns:
+  #   Retorna una lista con los clusters generados por el modelo y los centroides finales.
+    
+  clusters <- vector(maxIter, mode="list")
+  centers <- vector(maxIter, mode="list")
+    
+    for(i in 1:maxIter) {
+      distsToCenters <- dist
+      cluster <- apply(distsToCenters, 1, which.min)
+      center <- apply(x, 2, tapply, cluster, mean)
+      clusters <- cluster
+      centers <- center
+    }#endfor
+    
+    return(list(clusters = clusters, centers= centers))
 }
+
+#********************************************************************************
+#                            DISTANCIA EUCLIDIANA
+#********************************************************************************
+distancia <- function(df, centros) {
+  # Calcula la distancia entre los centros iniciales
+  # y todos los puntos del dataframe utilizando la distancia euclidiana de norma 2.
+  #
+  # Args:
+  #   df: Puntos del dataframe.
+  #   centros: Centros iniciales.
+  #
+  # Returns:
+  #   Retorna todas las distancias de los centros con los del dataframe.
+  
+  #Genero la matriz de las distancias
+  euclidiana <- matrix(NA, 
+                       nrow=dim(df)[1], 
+                       ncol=dim(centros)[1])
+  
+  #Calculo la distancia euclidiana con cada centro.
+  for(i in 1:nrow(centros)) {
+    #Distancia euclidiana: d_E(P_1,P_2)=\sqrt{(x_2-x_1)^2+(y_2-y_1)^2}
+    euclidiana[,i] <- sqrt(rowSums(t(t(df) - centros[i,])^2))
+  }#endfor
+  
+  return(euclidiana)
+}
+
+#********************************************************************************
+#                            SAMPLE ESTRATIFICADO
+#********************************************************************************
+
+
+#********************************************************************************
+#                     CALCULO DE CENTROIDES SOBRE EL SUBCONJUNTO
+#********************************************************************************
+
+
+#********************************************************************************
+#APLICAR K-MEDIAS UTILIZANDO TODO EL CONJUNTO DE DATOS CON  LOS CENTROIDES
+#FINALES DEL SAMPLE ESTRATIFICADO
+#********************************************************************************
+test=df
+test$class <- NULL# A data.frame
+ktest=as.matrix(test) # Turn into a matrix
+centers <- ktest[sample(nrow(ktest), 3),] # Sample some centers, 5 for example
+centers[1,1] <- modeloK$centers[1,1]
+centers[1,2] <- modeloK$centers[1,2]
+
+centers[2,1] <- modeloK$centers[2,1]
+centers[2,2] <- modeloK$centers[2,2]
+
+centers[3,1] <- modeloK$centers[3,1]
+centers[3,2] <- modeloK$centers[3,2]
+
+
+dist <- distancia(ktest, centers)
+
+res <- kmedias(ktest, centers, dist, 1)
+plot(df$x, df$y, col = (res$clusters))
+
+# Ahora graficamos los centroides 
+
+points(x = res$centers, col = 4:8, pch = 19, cex = 3)
+
+
+
+

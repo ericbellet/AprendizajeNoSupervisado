@@ -39,7 +39,7 @@ setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
   
 #  Funciones implementadas
   
-  Antes de realizar los correspondientes análisis a los distintos datasets, vamos a explicar brevemente las funciones implementadas que nos ayudaran a realizar lo anteriormente señalado.
+  Antes de realizar los correspondientes análisis a los distintos datasets, vamos a explicar brevemente las funciones implementadas que nos ayudaran a realizar lo anteriormente señalado. Para realizar algunos análisis exploratorios se usó un graficador 3D, el cual por razones de configuración no fue posible mostrarlo en el siguiente pdf.
   
 ### K-medias  
 Es un método de agrupamiento, que tiene como objetivo la partición de un conjunto de n observaciones en k grupo.
@@ -236,7 +236,6 @@ precision <- function(m){
 }
 
 ```
-
 ###  Mejor modelo
 Selecciona el mejor modelo utilizando como criterio la mayor precisión.
 

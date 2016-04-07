@@ -1,7 +1,7 @@
 setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
 source("src/funciones.R")
 library(rgl)
-name = "help.csv"
+name = ""
 #Lectura de datos.
 df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/help.csv", header = F)
 #Modificamos el nombre de las columnas por comodidad.
