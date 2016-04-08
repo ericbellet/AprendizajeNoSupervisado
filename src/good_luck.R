@@ -1,6 +1,27 @@
+install = function(pkg)
+{
+  # Si ya está instalado, no lo instala.
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    if (!require(pkg, character.only = TRUE)) stop(paste("load failure:", pkg))
+  }
+}
+
+#Instalo automaticamente los paquetes.
+install('rgl')
+install('FactoMineR')
+install('pROC')
+install('sampling')
+
+#Cargo las librerias.
+library(rgl)
+library(FactoMineR)
+library(pROC)
+library(sampling)
+
 setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
 source("src/funciones.R")
-library('FactoMineR')
+
 name = ""
 #Lectura de datos.
 df = read.csv(file = "C:/Users/Eric/Desktop/AprendizajeNoSupervisado/data/good_luck.csv", header = F)

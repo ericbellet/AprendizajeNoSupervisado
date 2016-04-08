@@ -1,3 +1,23 @@
+install = function(pkg)
+{
+  # Si ya está instalado, no lo instala.
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    if (!require(pkg, character.only = TRUE)) stop(paste("load failure:", pkg))
+  }
+}
+
+#Instalo automaticamente los paquetes.
+install('rgl')
+install('FactoMineR')
+install('pROC')
+install('sampling')
+
+#Cargo las librerias.
+library(rgl)
+library(FactoMineR)
+library(pROC)
+library(sampling)
 setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
 source("src/funciones.R")
 name = "a_big.csv"
@@ -56,7 +76,7 @@ plot(modeloKROC,type="l",col="red")
 #********************************************************************************
 #                                     K-MEDIAS
 #********************************************************************************
-kmedias <- function(x, centers, dist, maxIter) {
+kkmedias <- function(x, centers, dist, maxIter) {
   # Aplica el algoritmo de k-medias al dataframe.
   #
   # Args:
@@ -96,7 +116,7 @@ distancia <- function(df, centros) {
   # Returns:
   #   Retorna todas las distancias de los centros con los del dataframe.
   
-  #Genero la matriz de las distancias
+  #Genero la matriz de las distancias vacia.
   euclidiana <- matrix(NA, 
                        nrow=dim(df)[1], 
                        ncol=dim(centros)[1])
@@ -113,39 +133,82 @@ distancia <- function(df, centros) {
 #********************************************************************************
 #                            SAMPLE ESTRATIFICADO
 #********************************************************************************
-
+stratified = function(df, class, size) {
+  # Genera un un sample estratificado del dataset.
+  #
+  # Args:
+  #   df: Dataframe original.
+  #   class: Columna clase.
+  #   size: Tamano del dataframe resultado
+  #
+  # Returns:
+  #   Retorna un dataframe estratificado.
+  
+  temp = df[order(df[class]),]
+  if (size < 1) {
+    size = ceiling(table(temp[class]) * size)
+  } else if (size >= 1) {
+    size = rep(size, times=length(table(temp[class])))
+  }  
+  strat = strata(temp, stratanames = names(temp[class]), 
+                 size = size, method = "srswor")
+  (dsample = getdata(temp, strat))
+}
 
 #********************************************************************************
 #                     CALCULO DE CENTROIDES SOBRE EL SUBCONJUNTO
 #********************************************************************************
+#Genero un sample estratificado de size 500.
+df_stra <- stratified(df, 3, 500)
 
+#Podemos observar que se parece a.csv
+plot(df_stra$x,df_stra$y)
+
+stra <- df_stra
+stra$class <- NULL
+stra$ID_unit <- NULL
+stra$Prob <- NULL
+stra$Stratum <- NULL
+kstra <- as.matrix(stra)
+#Genero centroides aleatorios
+centers <- kstra[sample(nrow(kstra), 3),] 
+
+#Calculo la distancia euclidiana
+dist <- distancia(kstra, centers)
+
+#Genero el k-medias para el sample.
+res <- kkmedias(kstra, centers, dist, 1000)
+plot(df_stra$x, df_stra$y, col = res$clusters)
+
+# Ahora graficamos los centroides 
+points(x = res$centers, col = 4:8, pch = 19, cex = 3)
 
 #********************************************************************************
 #APLICAR K-MEDIAS UTILIZANDO TODO EL CONJUNTO DE DATOS CON  LOS CENTROIDES
 #FINALES DEL SAMPLE ESTRATIFICADO
 #********************************************************************************
-test=df
-test$class <- NULL# A data.frame
-ktest=as.matrix(test) # Turn into a matrix
-centers <- ktest[sample(nrow(ktest), 3),] # Sample some centers, 5 for example
-centers[1,1] <- modeloK$centers[1,1]
-centers[1,2] <- modeloK$centers[1,2]
+dfcompleto <- df
+dfcompleto$class <- NULL
+dfcompleto <- as.matrix(dfcompleto) 
 
-centers[2,1] <- modeloK$centers[2,1]
-centers[2,2] <- modeloK$centers[2,2]
+#Utilizo como centroides iniciales, los centroides finales del sampling.
+centers <- res$centers
 
-centers[3,1] <- modeloK$centers[3,1]
-centers[3,2] <- modeloK$centers[3,2]
+dist <- distancia(dfcompleto, centers)
 
+#Coloco un maximo de iteracciones bajo ya que indicandole unos centroides iniciales
+#adecuados, el algoritmo converge rapido.
 
-dist <- distancia(ktest, centers)
+res <- kkmedias(dfcompleto, centers, dist, 5)
 
-res <- kmedias(ktest, centers, dist, 1)
+#Graficamos los clusters
 plot(df$x, df$y, col = (res$clusters))
-
 # Ahora graficamos los centroides 
-
 points(x = res$centers, col = 4:8, pch = 19, cex = 3)
+
+#Generamos la matriz de confusion
+MatrixConfusion <- matrizconfusion(df$class,res$clusters)
+MatrixConfusion
 
 
 

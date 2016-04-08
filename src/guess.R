@@ -1,3 +1,25 @@
+install = function(pkg)
+{
+  # Si ya está instalado, no lo instala.
+  if (!require(pkg, character.only = TRUE)) {
+    install.packages(pkg)
+    if (!require(pkg, character.only = TRUE)) stop(paste("load failure:", pkg))
+  }
+}
+
+#Instalo automaticamente los paquetes.
+install('rgl')
+install('FactoMineR')
+install('pROC')
+install('sampling')
+
+#Cargo las librerias.
+library(rgl)
+library(FactoMineR)
+library(pROC)
+library(sampling)
+
+
 setwd("C:/Users/Eric/Desktop/AprendizajeNoSupervisado")
 source("src/funciones.R")
 name = "guess.csv"
